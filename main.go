@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"fmt"
 )
 
 func main() {
@@ -21,11 +22,20 @@ func main() {
 	viper.SetDefault("server_name", "")
 	viper.SetDefault("port", 52525)
 	viper.SetDefault("refresh_every", "10")
+	viper.SetDefault("bin_directory", "/home/doger/dogecoin-bin/bin")
 
 	// look for config file in current directory and /etc/
 	viper.SetConfigName("config")
 	viper.AddConfigPath("/etc")
 	viper.AddConfigPath(".")
+
+	err = viper.ReadInConfig() // Find and read the config file
+	if err != nil { // Handle errors reading the config file
+		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+	}
+
+	// start reading data
+	_, _, _ = getData()
 
 	// set up router
 	router := httprouter.New()
@@ -37,4 +47,6 @@ func main() {
 
 	// start listening
 	log.Fatal(http.ListenAndServe(viper.GetString("server_name")+":"+viper.GetString("port"), router))
+
+
 }

@@ -1,5 +1,6 @@
 {
-	"server_name": "", // leave empty to listen to your server ip
+	"server_name": "", 
 	"port": 52525,
-	"refresh_every": 10 // seconds
+	"refresh_every": 10, 
+	"bin_directory": "D:\\Dogecoin\\daemon"
 }
