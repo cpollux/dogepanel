@@ -11,10 +11,8 @@ var loginT = template.Must(template.New("login").ParseFiles("templates/base.html
 var panelT = template.Must(template.New("panel").ParseFiles("templates/base.html", "templates/panel.html"))
 
 type Page struct {
-
 	Title string
 }
-
 
 func ViewLoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	p := Page{"DogePanel | Login"}

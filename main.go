@@ -5,16 +5,16 @@ import (
 	"log"
 	"net/http"
 	"os"
-    "path/filepath"
+	"path/filepath"
 )
 
 func main() {
 
 	ex, err := os.Executable() // get directory the binary is placed in
-    if err != nil {
-        panic(err)
-    }
-    dirname := filepath.Dir(ex) 
+	if err != nil {
+		panic(err)
+	}
+	dirname := filepath.Dir(ex)
 
 	router := httprouter.New()
 	router.GET("/", ViewPanelHandler)
