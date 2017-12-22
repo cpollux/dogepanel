@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"github.com/spf13/viper"
 	"log"
 	"net/http"
 	"os"
@@ -16,6 +17,17 @@ func main() {
 	}
 	dirname := filepath.Dir(ex)
 
+	// Configuration (see config file for further explanation)
+	viper.SetDefault("server_name", "")
+	viper.SetDefault("port", 52525)
+	viper.SetDefault("refresh_every", "10")
+
+	// look for config file in current directory and /etc/
+	viper.SetConfigName("config")
+	viper.AddConfigPath("/etc")
+	viper.AddConfigPath(".")
+
+	// set up router
 	router := httprouter.New()
 	router.GET("/", ViewPanelHandler)
 	router.GET("/login", ViewLoginHandler)
@@ -23,5 +35,6 @@ func main() {
 	router.GET("/data", ViewDataHandler)
 	router.ServeFiles("/static/*filepath", http.Dir(filepath.Join(dirname, "static/")))
 
-	log.Fatal(http.ListenAndServe(":52525", router))
+	// start listening
+	log.Fatal(http.ListenAndServe(viper.GetString("server_name")+":"+viper.GetString("port"), router))
 }
