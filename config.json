@@ -2,5 +2,5 @@
 	"server_name": "", 
 	"port": 52525,
 	"refresh_every": 10, 
-	"cli_path": "/home/doger/dogecoin-bin/bin/dogecoin-cli"
+	"cli_path": "/home/doger/dogecoin/bin/dogecoin-cli"
 }
