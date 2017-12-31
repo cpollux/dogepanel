@@ -21,12 +21,14 @@ func main() {
 	dirname := filepath.Dir(ex)
 	log.Print("        successful")
 
+
 	// Configuration (see config file for further explanation)
 	log.Println(" ... Setting default config parameters.")
 	viper.SetDefault("server_name", "")
 	viper.SetDefault("port", 52525)
 	viper.SetDefault("refresh_every", "10")
 	viper.SetDefault("cli_path", "/home/doger/dogecoin-bin/bin/dogecoin-cli")
+	viper.SetDefault("ui_font", `-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !default"`)
 
 	// look for config file in current directory and /etc/
 	viper.SetConfigName("config")
