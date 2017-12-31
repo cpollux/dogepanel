@@ -7,37 +7,41 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"fmt"
 )
 
 func main() {
 
+	log.Println("Trying to start dogepanel:")
+
+	log.Print(" ... Trying to locate where the dogepanel binary is executed from: ")
 	ex, err := os.Executable() // get directory the binary is placed in
 	if err != nil {
-		panic(err)
+		log.Panicf("%s \n", err)
 	}
 	dirname := filepath.Dir(ex)
+	log.Print("        successful")
 
 	// Configuration (see config file for further explanation)
+	log.Println(" ... Setting default config parameters.")
 	viper.SetDefault("server_name", "")
 	viper.SetDefault("port", 52525)
 	viper.SetDefault("refresh_every", "10")
-	viper.SetDefault("bin_directory", "/home/doger/dogecoin-bin/bin")
+	viper.SetDefault("cli_path", "/home/doger/dogecoin-bin/bin/dogecoin-cli")
 
 	// look for config file in current directory and /etc/
 	viper.SetConfigName("config")
 	viper.AddConfigPath("/etc")
 	viper.AddConfigPath(".")
 
+	log.Print(" ... Trying to read in config file: ")
 	err = viper.ReadInConfig() // Find and read the config file
-	if err != nil { // Handle errors reading the config file
-		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+	if err != nil {            // Handle errors reading the config file
+		log.Panicf("%s \n", err)
 	}
-
-	// start reading data
-	_, _, _ = getData()
+	log.Println("        successful")
 
 	// set up router
+	log.Println(" ... Setting up router.")
 	router := httprouter.New()
 	router.GET("/", ViewPanelHandler)
 	router.GET("/login", ViewLoginHandler)
@@ -46,7 +50,9 @@ func main() {
 	router.ServeFiles("/static/*filepath", http.Dir(filepath.Join(dirname, "static/")))
 
 	// start listening
-	log.Fatal(http.ListenAndServe(viper.GetString("server_name")+":"+viper.GetString("port"), router))
-
-
+	log.Printf(" ... Listening on port %s.\n", viper.GetString("port"))
+	err = http.ListenAndServe(viper.GetString("server_name")+":"+viper.GetString("port"), router)
+	if err != nil {
+		log.Panicf("%s \n", err)
+	}
 }

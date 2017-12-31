@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	"log"
 	"net/http"
 	"text/template"
 )
@@ -29,5 +31,21 @@ func ViewPanelHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 }
 
 func ViewDataHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	fmt.Fprint(w, "Welcome! 4\n")
+
+	// get Data
+	data, err := getData()
+
+	if err == nil {
+		j, err := json.Marshal(data)
+
+		if err == nil {
+			w.Write(j)
+		} else {
+			log.Printf("\n\n%s\n\n", err)
+			w.Write([]byte("{\"error\": \"Could not retrieve new data. Please check the log file.\"}"))
+		}
+	} else {
+		log.Printf("\n\n%s\n\n", err)
+		w.Write([]byte("{\"error\": \"Could not retrieve new data. Please check the log file.\"}"))
+	}
 }
