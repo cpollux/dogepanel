@@ -19,7 +19,7 @@ type Page struct {
 }
 
 func ViewLoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	p := Page{"DogePanel | Login", viper.GetString("ui_font")}
+	p := Page{"DogePanel | Login", viper.GetString("uiFont")}
 	loginT.ExecuteTemplate(w, "base", p)
 }
 
@@ -28,7 +28,7 @@ func SubmitLoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 }
 
 func ViewPanelHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	p := Page{"DogePanel", viper.GetString("ui_font")}
+	p := Page{"DogePanel", viper.GetString("uiFont")}
 	panelT.ExecuteTemplate(w, "base", p)
 }
 

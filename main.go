@@ -24,11 +24,11 @@ func main() {
 
 	// Configuration (see config file for further explanation)
 	log.Println(" ... Setting default config parameters.")
-	viper.SetDefault("server_name", "")
+	viper.SetDefault("serverName", "")
 	viper.SetDefault("port", 52525)
-	viper.SetDefault("refresh_every", "10")
-	viper.SetDefault("cli_path", "/home/doger/dogecoin-bin/bin/dogecoin-cli")
-	viper.SetDefault("ui_font", `-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !default"`)
+	viper.SetDefault("refreshEvery", "10")
+	viper.SetDefault("cliPath", "/home/doger/dogecoin-bin/bin/dogecoin-cli")
+	viper.SetDefault("uiFont", `-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !default"`)
 
 	// look for config file in current directory and /etc/
 	viper.SetConfigName("config")
@@ -53,7 +53,7 @@ func main() {
 
 	// start listening
 	log.Printf(" ... Listening on port %s.\n", viper.GetString("port"))
-	err = http.ListenAndServe(viper.GetString("server_name")+":"+viper.GetString("port"), router)
+	err = http.ListenAndServe(viper.GetString("serverName")+":"+viper.GetString("port"), router)
 	if err != nil {
 		log.Panicf("%s \n", err)
 	}

@@ -34,7 +34,7 @@ func runCommand(name string, args ...string) ([]byte, error) {
 
 func getConnections() (*Connections, error) {
 
-	out, err := runCommand(viper.GetString("cli_path"), "getpeerinfo")
+	out, err := runCommand(viper.GetString("cliPath"), "getpeerinfo")
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("There was an error running getConnections() [data.go].\nError:%s", err))
 	}
