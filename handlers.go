@@ -1,13 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"github.com/spf13/viper"
+	"log"
 	"net/http"
 	"text/template"
-	"log"
-	"encoding/json"
 )
 
 var loginT = template.Must(template.New("login").ParseFiles("templates/base.html", "templates/login.html"))
@@ -15,7 +15,7 @@ var panelT = template.Must(template.New("panel").ParseFiles("templates/base.html
 
 type Page struct {
 	Title string
-	Font string
+	Font  string
 }
 
 func ViewLoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -33,13 +33,13 @@ func ViewPanelHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 }
 
 func ViewDataHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	
+
 	// get Data
 	data, err := getData()
 
 	if err == nil {
 		j, err := json.Marshal(data)
-		
+
 		if err == nil {
 			w.Write(j)
 		} else {

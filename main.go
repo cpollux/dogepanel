@@ -21,7 +21,6 @@ func main() {
 	dirname := filepath.Dir(ex)
 	log.Print("        successful")
 
-
 	// Configuration (see config file for further explanation)
 	log.Println(" ... Setting default config parameters.")
 	viper.SetDefault("serverName", "")
