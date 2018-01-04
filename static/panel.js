@@ -8,6 +8,11 @@
 		return 0;
 	}
 
+	// formats bytes as GB (two decimal points)
+	function prettyBytes(byteCount) {
+		return (Math.round((byteCount / 1000000000) * 100) / 100) + " GB";
+	}
+
 	// formats the diffrence of 'time' to the unix time beautiful (e.g. 12h 15m 16s)
 	function prettyUnixTimeDuration(time) {
 
@@ -49,7 +54,6 @@
 		self.options = defaultOptions;
 
 		// archive of older data to generate graphs
-		// data objects must be this form: data = { connections: { inbound: [], outbound: [] } }
 		self.dataArchive = [];
 
 		// callbacks
@@ -104,11 +108,21 @@
 
 			// read in new data
 			var data = { 
+				blockchain: {
+					blockCount:  0,
+					difficulty:  0.0,
+					memoryUsage: 0,
+				},
 				connections: { 
 					inbound:  [], 
 					outbound: [],
 				}
 			};
+
+			// blockchain info and remap property names to fir the server side names
+			data.blockchain.blockCount  = obj.blockchainInfo.blocks;
+			data.blockchain.difficulty  = obj.blockchainInfo.difficulty;
+			data.blockchain.memoryUsage = obj.blockchainInfo.memoryUsage;
 
 			// split connections in inbound and outbound and remap property names to fit the server side names
 			for(var i = 0; i < obj.connections.length; i++) {
@@ -147,6 +161,16 @@
 		xhr.open("GET", "./data", true);
 		xhr.send();
 	};
+
+	// renders blockchain info
+	Panel.prototype.renderBlockhainInfo = function() {
+
+		var self = this;
+		var info = self.dataArchive[this.dataArchive.length - 1].blockchain;
+
+		var blockchainInfoTable = document.getElementById("blockchain-info");
+		blockchainInfoTable.innerHTML = "<td>" + info.blockCount + "</td><td>" + info.difficulty + "</td><td>" + prettyBytes(info.memoryUsage) + "</td>";
+	}
 
 	// renders connections
 	Panel.prototype.renderConnections = function() {
@@ -194,7 +218,10 @@
 	// call all render functions
 	Panel.prototype.renderAll = function() {
 
-		this.renderConnections();
+		var self = this;
+
+		self.renderBlockhainInfo();
+		self.renderConnections();
 	};
 	
 	window.DogePanel = Panel;

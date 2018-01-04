@@ -3,5 +3,6 @@
 	"port": 52525,
 	"refreshEvery": 10, 
 	"cliPath": "/home/doger/dogecoin/bin/dogecoin-cli",
+	"blockchainPath": "/home/doger/.dogecoin/blocks",
 	"uiFont": "-apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif !default"
 }

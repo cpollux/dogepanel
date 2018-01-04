@@ -27,6 +27,7 @@ func main() {
 	viper.SetDefault("serverName", "")
 	viper.SetDefault("port", 52525)
 	viper.SetDefault("refreshEvery", "10")
+	viper.SetDefault("blockchainPath", "/home/doger/.dogecoin/blocks")
 	viper.SetDefault("cliPath", "/home/doger/dogecoin-bin/bin/dogecoin-cli")
 	viper.SetDefault("uiFont", `-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !default"`)
 
