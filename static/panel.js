@@ -59,6 +59,9 @@
 		// callbacks
 		self.successCallback = function(){};
 		self.failCallback 	 = function(){};
+
+		// pause requesting new data and updating the view (successCallback doesn't get trigger. You have to call requestNewData to continue.)
+		self.paused = false;
 	}
 
 	// Stores a callback function when requesting new data is successfull
@@ -76,6 +79,12 @@
 
 		var self = this;
 		var xhr  = new XMLHttpRequest();
+
+		// if panel is paused
+		if(self.paused) {
+			// do not trigger successCallback
+			return;
+		}
 
 		xhr.onreadystatechange = function() {
 
@@ -219,6 +228,11 @@
 	Panel.prototype.renderAll = function() {
 
 		var self = this;
+
+		// if paused, but the request was already sent
+		if(self.paused) {
+			return;
+		}
 
 		self.renderBlockhainInfo();
 		self.renderConnections();

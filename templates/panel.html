@@ -3,6 +3,8 @@
 
 	<h1 class="text-center my-2">DogePanel</h1>
 
+	<button class="btn btn-primary" id="pause">Pause</button>
+
 	<table class="table table-sm table-striped mt-4">
 
 		<thead class="thead-dark">
@@ -59,12 +61,13 @@
 </div>
 
 <script type="text/javascript" src="./static/panel.js"></script>
+<script type="text/javascript" src="./static/pause.js"></script>
 <script type="text/javascript">
 	
 	window.onload = function() {
 
 		var p = new DogePanel();
-
+		
 		// initialize callbacks before requesting new data
 		p.success(function() {
 			p.renderAll();
@@ -79,6 +82,28 @@
 		});
 
 		p.requestNewData();
+
+		// stop requesting and showing new data
+		var b = new PauseButton("pause");
+		b.fail(function(error) {
+			alert(error);
+		});
+
+		b.onClick(function() {
+
+			// if panel already paused
+			if(p.paused) {
+				// unpause
+				b.text("Paused");
+				p.paused = false;
+				p.requestNewData();
+				return;
+			}
+
+			b.text("Continue");
+			p.paused = true;
+
+		});
 	};
 
 </script>
