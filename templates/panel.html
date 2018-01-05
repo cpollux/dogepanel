@@ -1,62 +1,58 @@
 {{define "content"}}
 <div id="panel" class="container my-4 p-4">
 
-	<h1 class="text-center my-2">DogePanel</h1>
+	<h1 class="text-center text-white my-4">DogePanel <button class="btn btn-primary" id="pause">Pause</button></h1>
 
-	<button class="btn btn-primary" id="pause">Pause</button>
+	<div class="row">
 
-	<table class="table table-sm table-striped mt-4">
+		<div class="col-md-4 col-sm-12">
 
-		<thead class="thead-dark">
-			<tr><th colspan="3">Blockchain info</th></tr>
-		</thead>
+			<div class="card text-white bg-primary" id="blockchain-info-card">
+				<div class="card-header">Blockchain info</div>
+				<div class="card-body">
+					<p><strong>Block count:</strong> <span id="block-count"></span></p>
+					<p><strong>Difficulty:</strong> <span id="block-difficulty"></span></p>
+					<p><strong>Memory usage:</strong> <span id="memory-usage"></span></p>
+				</div>
+			</div>
 
-		<tbody>			
+			<div class="card text-white bg-success mt-4" id="network-info-card">
+				<div class="card-header">Network info</div>
+				<div class="card-body">
+					<p><strong>Inbound connections:</strong> <span id="inbound-connection-count"></span></p>
+					<p><strong>Outbound connections:</strong> <span id="outbound-connection-count"></span></p>
+					<p><strong>Bytes sent:</strong>* <span id="sent-byte-count"></span></p>
+					<p><strong>Bytes recieved:</strong>* <span id="recieved-byte-count"></span></p>
+				</div>
+			</div>
 
-			<tr>
-				<td><i>Block count</i></td>
-				<td><i>Difficulty</i></td>
-				<td><i>Memory Usage (Bytes)</i></td>
-			</tr>
-			<tr id="blockchain-info"></tr>
-			
-		</tbody>
+		</div>
 
-	</table>
+	</div>
 
-	<table class="table table-sm table-striped mt-4">
+	<div class="row">
+		
+		<div class="col-md-9 col-sm-12">
 
-		<thead class="thead-dark">
-			<tr><th colspan="4">Inbound connections</th></tr>
-		</thead>
+			<div class="card mt-4">
+				<div class="card-header">Inbound connections</div>
+				<div class="card-body" id="inbound-connections">
+				</div>
+			</div>
 
-		<tbody id="inbound-connections">			
-			
-		</tbody>
+		</div>
 
-	</table>
+		<div class="col-md-3 col-sm-12">
 
-	<table class="table table-sm table-striped mt-4">
+			<div class="card mt-4">
+				<div class="card-header">Outbound connections</div>
+				<div class="card-body" id="outbound-connections">
+				</div>
+			</div>
 
-		<thead class="thead-dark">
-			<tr><th colspan="4">Outbound connections</th></tr>
-		</thead>
+		</div>
 
-		<tbody id="outbound-connections">			
-			
-		</tbody>
-
-	</table>
-
-
-	<!-- <img class="img-fluid mt-3" src="./static/bar.png">
-
-	<blockquote class="blockquote mt-1">
-		<p class="mb-0">"much panel. many information. wow. many numbers. so beautiful."</p>
-		<footer class="blockquote-footer">Albert Einstein</cite></footer>
-	</blockquote>
-
-	<img class="img-fluid mb-3" src="./static/bar.png"> -->
+	</div>
 
 </div>
 
@@ -67,6 +63,7 @@
 	window.onload = function() {
 
 		var p = new DogePanel();
+		p.initElements(); // look up all DOM elements to render the data
 		
 		// initialize callbacks before requesting new data
 		p.success(function() {

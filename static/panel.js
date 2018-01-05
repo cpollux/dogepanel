@@ -60,6 +60,9 @@
 		self.successCallback = function(){};
 		self.failCallback 	 = function(){};
 
+		// DOM elements
+		self.el = {};
+
 		// pause requesting new data and updating the view (successCallback doesn't get trigger. You have to call requestNewData to continue.)
 		self.paused = false;
 	}
@@ -72,6 +75,24 @@
 	// Stores a callback function when requesting new data failed
 	Panel.prototype.fail = function(callback) {
 		this.failCallback = callback;
+	};
+
+	// Get all DOM elements
+	Panel.prototype.initElements = function() {
+
+		var self = this;
+
+		// blockchain info
+		self.el.blockCount 		= document.getElementById("block-count");
+		self.el.blockDifficulty = document.getElementById("block-difficulty");
+		self.el.memoryUsage 	= document.getElementById("memory-usage");
+
+		self.el.inboundConnectionCount  = document.getElementById("inbound-connection-count");
+		self.el.outboundConnectionCount = document.getElementById("outbound-connection-count");
+		self.el.sentByteCount 			= document.getElementById("sent-byte-count");
+		self.el.recievedByteCount		= document.getElementById("recieved-byte-count");
+		self.el.inboundConnections 		= document.getElementById("inbound-connections");
+		self.el.outboundConnections 	= document.getElementById("outbound-connections");
 	};
 
 	// Sends a request to the server to get new data. Callback gets triggered when the data is recieved.
@@ -122,31 +143,39 @@
 					difficulty:  0.0,
 					memoryUsage: 0,
 				},
-				connections: { 
-					inbound:  [], 
-					outbound: [],
+				networkInfo: {
+					bytesSent: 0,
+					bytesrecv: 0,
+					connections: { 
+						inbound:  [], 
+						outbound: [],
+					},
 				}
 			};
 
-			// blockchain info and remap property names to fir the server side names
+			// blockchain info and remap property names to fit server side names
 			data.blockchain.blockCount  = obj.blockchainInfo.blocks;
 			data.blockchain.difficulty  = obj.blockchainInfo.difficulty;
 			data.blockchain.memoryUsage = obj.blockchainInfo.memoryUsage;
 
-			// split connections in inbound and outbound and remap property names to fit the server side names
-			for(var i = 0; i < obj.connections.length; i++) {
+			// traffic info and remap property names to fit server side names
+			data.networkInfo.bytesSent     = obj.networkInfo.totalbytessent;
+			data.networkInfo.bytesRecieved = obj.networkInfo.totalbytesrecv;
 
-				var c = obj.connections[i];
+			// split connections in inbound and outbound and remap property names to fit server side names
+			for(var i = 0; i < obj.networkInfo.connections.length; i++) {
+
+				var c = obj.networkInfo.connections[i];
 
 				if(c.inbound) {
-					data.connections.inbound.push({
+					data.networkInfo.connections.inbound.push({
 						address: 		c.addr,
 						bytesSent: 		c.bytessent,
 						bytesRecieved: 	c.bytesrecv,
 						connectionTime: c.conntime,
 					});
 				} else {
-					data.connections.outbound.push({
+					data.networkInfo.connections.outbound.push({
 						address: 	  	c.addr,
 						bytesSent: 		c.bytessent,
 						bytesRecieved: 	c.bytesrecv,
@@ -156,8 +185,8 @@
 			}
 
 			// sort the connections by its connection time
-			data.connections.inbound.sort(connectionTimeComparator);
-			data.connections.outbound.sort(connectionTimeComparator);
+			data.networkInfo.connections.inbound.sort(connectionTimeComparator);
+			data.networkInfo.connections.outbound.sort(connectionTimeComparator);
 
 			// push the data object to the archive. 
 			self.dataArchive.push(data);
@@ -177,51 +206,42 @@
 		var self = this;
 		var info = self.dataArchive[this.dataArchive.length - 1].blockchain;
 
-		var blockchainInfoTable = document.getElementById("blockchain-info");
-		blockchainInfoTable.innerHTML = "<td>" + info.blockCount + "</td><td>" + info.difficulty + "</td><td>" + prettyBytes(info.memoryUsage) + "</td>";
+		self.el.blockCount.innerHTML 	  = info.blockCount;
+		self.el.blockDifficulty.innerHTML = info.difficulty;
+		self.el.memoryUsage.innerHTML	  = prettyBytes(info.memoryUsage);
 	}
 
-	// renders connections
-	Panel.prototype.renderConnections = function() {
+	// renders network info
+	Panel.prototype.renderNetworkInfo = function() {
 
 		var self = this;
-		var conns = self.dataArchive[this.dataArchive.length - 1].connections;
+		var data = self.dataArchive[this.dataArchive.length - 1];
+		var conns = data.networkInfo.connections;
 
-		var inboundConnectionsTable  = document.getElementById("inbound-connections");
-		var outboundConnectionsTable = document.getElementById("outbound-connections");
+		var inConnCount  = 0;
+		var outConnCount = 0;
+
 		var inboundHtml  = "";
 		var outboundHtml = "";
 
-		for(var i = 0; i < conns.inbound.length; i += 2) {
-			var c1 = conns.inbound[i];
-			var c2 = conns.inbound[i + 1];
-			
-			inboundHtml += "<tr><td>" + c1.address + "</td><td style='border-right: 1px rgb(230, 230, 230) solid;'>" + prettyUnixTimeDuration(c1.connectionTime) + "</td>";
+		for(var i = 0; i < conns.inbound.length; i++) {
 
-			if(typeof c2 == "undefined") {
-				inboundHtml += "</tr>";
-				continue;
-			}
-
-			inboundHtml += "<td>" + c2.address + "</td><td>" + prettyUnixTimeDuration(c2.connectionTime) + "</td></tr>";
+			inConnCount++;
+			var c = conns.inbound[i];
+			inboundHtml += "<span class=\"badge badge-dark\">" + c.address + " <i>" + prettyUnixTimeDuration(c.connectionTime) + "</i></span> ";
 		}
 
-		for(var i = 0; i < conns.outbound.length; i += 2) {
-			var c1 = conns.outbound[i];
-			var c2 = conns.outbound[i + 1];
-			
-			outboundHtml += "<tr><td>" + c1.address + "</td><td style='border-right: 1px rgb(230, 230, 230) solid;'>" + prettyUnixTimeDuration(c1.connectionTime) + "</td>";
+		for(var i = 0; i < conns.outbound.length; i++) {
 
-			if(typeof c2 == "undefined") {
-				outboundHtml += "</tr>";
-				continue;
-			}
-
-			outboundHtml += "<td>" + c2.address + "</td><td>" + prettyUnixTimeDuration(c2.connectionTime) + "</td></tr>";
+			outConnCount++;
+			var c = conns.outbound[i];
+			outboundHtml += "<span class=\"badge badge-dark\">" + c.address + " <i>" + prettyUnixTimeDuration(c.connectionTime) + "</i></span> ";
 		}
 
-		inboundConnectionsTable.innerHTML  = inboundHtml;
-		outboundConnectionsTable.innerHTML = outboundHtml;
+		self.el.inboundConnections.innerHTML  = inboundHtml;
+		self.el.outboundConnections.innerHTML = outboundHtml;
+		self.el.sentByteCount.innerHTML 	  = data.networkInfo.bytesSent;
+		self.el.recievedByteCount.innerHTML   = data.networkInfo.bytesRecieved;
 	};
 
 	// call all render functions
@@ -235,7 +255,7 @@
 		}
 
 		self.renderBlockhainInfo();
-		self.renderConnections();
+		self.renderNetworkInfo();
 	};
 	
 	window.DogePanel = Panel;

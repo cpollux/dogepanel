@@ -15,8 +15,15 @@
 			body { background-color: transparent; font-family: {{.Font}}; }
 
 			/* Panel */
-			div#panel { background-color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-			dive#panel.small { max-width: 480px; }
+			div.card { /*background-color: white;*/ box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+			div#panel.small { max-width: 480px; }
+			
+			div#panel div.card p { margin-bottom: 0.25rem; }
+			div#panel div.card div.card-header { text-align: center; font-size: 0.8rem; text-transform: uppercase; }
+
+			table.table-compact > tbody { line-height: 0.8rem; font-size: 0.7rem; }
+			table.table-compact > tbody > tr > td { padding: 0.1rem; }
+
 		</style>
 
 	</head>

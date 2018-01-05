@@ -24,11 +24,17 @@ type Connection struct {
 	Inbound        bool   `json:"inbound"`
 }
 
-type Connections []Connection
+// type Connections []Connection
+
+type NetworkInfo struct {
+	BytesSent 	  uint64       `json:"totalbytessent"`
+	BytesRecieved uint64 	   `json:"totalbytesrecv"`
+	Connections   []Connection `json:"connections"`
+}
 
 type Data struct {
 	BlockchainInfo *BlockchainInfo `json:"blockchainInfo"`
-	Connections    *Connections    `json:"connections"`
+	NetworkInfo    *NetworkInfo    `json:"networkInfo"`
 }
 
 // Runs a shell comand and returns the produced output and error message
@@ -79,20 +85,33 @@ func getBlockchainInfo() (*BlockchainInfo, error) {
 	return &info, nil
 }
 
-func getConnections() (*Connections, error) {
+func getNetworkInfo() (*NetworkInfo, error) {
 
-	out, err := runCommand(viper.GetString("cliPath"), "getpeerinfo")
+	info := NetworkInfo{}
+
+	// get traffic stats
+	out, err := runCommand(viper.GetString("cliPath"), "getnettotals")
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("There was an error running getConnections() [data.go].\nError:%s", err))
+		return nil, errors.New(fmt.Sprintf("There was an error running getNetworkInfo() [data.go].\nError:%s", err))
+	}	
+
+	err = json.Unmarshal(out, &info)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("There was an error parsing the traffic stats in getConnections() [data.go]\nError:%s\n", err))
 	}
 
-	conns := Connections{}
-	err = json.Unmarshal(out, &conns)
+	// get connections
+	out, err = runCommand(viper.GetString("cliPath"), "getpeerinfo")
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("There was an error running getNetworkInfo() [data.go].\nError:%s", err))
+	}	
+
+	err = json.Unmarshal(out, &info.Connections)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("There was an error parsing the connection info in getConnections() [data.go]\nError:%s\n", err))
 	}
 
-	return &conns, nil
+	return &info, nil
 }
 
 func getData() (Data, error) {
@@ -106,11 +125,11 @@ func getData() (Data, error) {
 
 	d.BlockchainInfo = blockchainInfo
 
-	conns, err := getConnections()
+	info, err := getNetworkInfo()
 	if err != nil {
 		return d, err
 	}
-	d.Connections = conns
+	d.NetworkInfo = info;
 
 	return d, nil
 }
