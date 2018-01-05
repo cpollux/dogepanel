@@ -87,6 +87,11 @@
 		self.el.blockDifficulty = document.getElementById("block-difficulty");
 		self.el.memoryUsage 	= document.getElementById("memory-usage");
 
+		// graph
+		self.el.chart 		 = document.getElementById("chart");
+		self.el.chartContext = self.el.chart.getContext("2d");
+
+		// network info
 		self.el.inboundConnectionCount  = document.getElementById("inbound-connection-count");
 		self.el.outboundConnectionCount = document.getElementById("outbound-connection-count");
 		self.el.sentByteCount 			= document.getElementById("sent-byte-count");
@@ -244,6 +249,36 @@
 		self.el.recievedByteCount.innerHTML   = data.networkInfo.bytesRecieved;
 	};
 
+	// render graph
+	Panel.prototype.renderChart = function() {
+
+		var self = this;
+		var chart = new Chart(self.el.chartContext, {
+
+			type: "line",
+			data: {
+				labels: ["11:45", "12:00", "12:15", "12:30", "12:45", "13:00"],
+				datasets: [
+					{
+						label: "Sample data",
+						data: [1, 3, 7, 11, 9, 13],
+						fill: false
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				animation: {
+					duration: 0
+				},
+				hover: {
+					animationDuration: 0,
+				},
+				responsiveAnimationDuration: 0,
+			},
+		});
+	};
+
 	// call all render functions
 	Panel.prototype.renderAll = function() {
 
@@ -256,6 +291,7 @@
 
 		self.renderBlockhainInfo();
 		self.renderNetworkInfo();
+		self.renderChart();
 	};
 	
 	window.DogePanel = Panel;
