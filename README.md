@@ -1,7 +1,7 @@
 # Ɖogepanel
 Ɖogepanel is a web view for persons who run DogeCoin Core as full node. It shows data such as inbound/outbound connections. **Do not run the panel in production yet. The project is at an early stage and I'm looking for people who can give me some feedback and ideas.** If you want to get a message as soon as the project is production ready, leave me a message on github or reddit. (https://www.reddit.com/user/AllWeNeedIsDoge/)
 
-![Screenshot](https://i.imgur.com/qfQoMUr.jpg])
+![Screenshot](https://i.imgur.com/KBbBoPS.jpg])
 
 ## How to build
 Ɖogepanel is tested on Debian 9, but should work fine on any other distribution.
